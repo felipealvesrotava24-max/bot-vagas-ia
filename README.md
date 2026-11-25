@@ -9,6 +9,8 @@ perfil e envia as melhores no Telegram.
 - **vagas.html:** relatório com todas as vagas ativas, com campo de busca.
 - **Sem repetir:** o banco `vagas.db` guarda o que já foi enviado.
 
+**Página das vagas:** https://felipealvesrotava24-max.github.io/bot-vagas-ia/ (atualiza sozinha a cada execução).
+
 **Sem Telegram?** O bot funciona do mesmo jeito. Abra a aba **Actions** do repositório e clique na execução mais
 recente: o Top 10 e a situação de cada fonte aparecem na própria página. Em **Artifacts**, baixe o
 `relatorio-vagas` para abrir o `vagas.html` completo no navegador. Para ligar o Telegram depois, rode
