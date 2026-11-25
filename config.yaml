@@ -1,0 +1,119 @@
+# =====================================================================
+#  CONFIGURAÇÃO DO BOT DE VAGAS DE IA
+#  Pode editar à vontade. Depois de mudar, rode: python main.py --teste
+# =====================================================================
+
+# Identificação do bot nas requisições (boa prática de scraping ético)
+user_agent: "bot-vagas-ia/1.0 (monitor pessoal de vagas freelance; uso nao comercial)"
+intervalo_por_dominio: 2      # segundos de espera entre requisições ao mesmo site
+timeout: 30                   # segundos até desistir de uma requisição
+
+# ---------------------------------------------------------------------
+#  ENVIO
+# ---------------------------------------------------------------------
+top_n: 10                     # quantas vagas no resumo diário
+nota_alerta: 80               # nota a partir da qual manda alerta imediato
+nota_minima_resumo: 30        # vagas abaixo disso não entram no resumo
+dias_recente: 7               # "publicada há menos de X dias" ganha bônus
+cambio_brl_usd: 5.40          # para converter R$/hora em US$/hora
+valor_referencia: media       # para faixas "$8 a $65": media | minimo | maximo
+
+# ---------------------------------------------------------------------
+#  FONTES
+#  tipo: greenhouse | lever | ashby | html | rss
+#  ativo: false desliga a fonte sem apagar
+# ---------------------------------------------------------------------
+fontes:
+  - {nome: "Scale AI",               tipo: greenhouse, token: scaleai,       ativo: true}
+  - {nome: "Labelbox",               tipo: greenhouse, token: labelbox,      ativo: true}
+  - {nome: "Toloka",                 tipo: greenhouse, token: toloka,        ativo: true}
+  - {nome: "Appen",                  tipo: greenhouse, token: appen,         ativo: true}
+  - {nome: "Invisible Technologies", tipo: greenhouse, token: invisibletech, ativo: true}
+  - {nome: "Turing",                 tipo: greenhouse, token: turing,        ativo: true}
+  - {nome: "Prolific",               tipo: greenhouse, token: prolific,      ativo: true}
+  - {nome: "Meridial",               tipo: greenhouse, token: agency,        ativo: true}
+  - {nome: "RWS TrainAI",            tipo: lever,      token: rws,           ativo: true}
+  - {nome: "Handshake AI",           tipo: ashby,      token: handshake,     ativo: true}
+  - {nome: "Mercor",                 tipo: ashby,      token: mercor,        ativo: true}
+
+  # Páginas públicas (HTML). padrao_link = trecho que o link da vaga contém.
+  - {nome: "Alignerr",       tipo: html, url: "https://www.alignerr.com/jobs",   padrao_link: "/jobs/",        ativo: true}
+  - {nome: "Mindrift",       tipo: html, url: "https://mindrift.ai/apply",       padrao_link: "workable.com/", ativo: true}
+  - {nome: "DataAnnotation", tipo: html, url: "https://www.dataannotation.tech/", padrao_link: "/job-board/",  ativo: true}
+  - {nome: "OpenTrain AI",   tipo: html, url: "https://www.opentrain.ai/jobs",   padrao_link: "/jobs/",        ignorar_link: "pay-rates", ativo: true}
+  - {nome: "OneForma",       tipo: html, url: "https://www.oneforma.com/jobs/",  padrao_link: "/projects/",    ignorar_link: "/projects/$", ativo: true}
+
+  # Fora por enquanto (motivo ao lado). Mude para ativo: true se mudar.
+  - {nome: "Outlier",        tipo: html, url: "https://outlier.ai/experts", padrao_link: "/", ativo: false}  # robots.txt proíbe /experts
+  - {nome: "TELUS Digital",  tipo: html, url: "https://www.telusdigital.com/careers/ai-community", padrao_link: "/", ativo: false}  # bloqueia bots (403)
+  - {nome: "e2f",            tipo: html, url: "https://www.e2f.com/careers", padrao_link: "/", ativo: false}  # site não respondeu
+  - {nome: "Welocalize",     tipo: html, url: "https://www.welocalize.com/careers/", padrao_link: "/", ativo: false}  # página 404
+
+# ---------------------------------------------------------------------
+#  PESOS DA NOTA (0 a 100)
+# ---------------------------------------------------------------------
+pesos:
+  portugues_br: 25
+  espanhol: 20
+  multilingue_pt_es: 30       # usado no lugar dos dois acima quando tem PT e ES
+  elegivel_brasil_latam: 20
+  valor_alto: 20              # >= valor_alto_min
+  valor_medio: 10             # entre valor_medio_min e valor_alto_min
+  dominio: 15
+  flexivel: 10
+  recente: 10
+  ingles_fluente: -15
+  outro_idioma: -20           # título pede idioma que você não fala (francês, alemão...) e não pede PT/ES
+valor_alto_min: 25
+valor_medio_min: 15
+
+# ---------------------------------------------------------------------
+#  PALAVRAS-CHAVE (expressões regulares, sem diferenciar maiúsculas)
+# ---------------------------------------------------------------------
+palavras:
+  portugues: ['portugu[eê]s', 'portuguese', 'pt-br', '\bpt[-_ ]?br\b']
+  portugal: ['portuguese\W{0,3}\(?\s*portugal', 'european portuguese', 'pt-pt']
+  # Se citar Portugal, só conta como PT-BR quando o português do Brasil aparece explícito
+  portugues_br_explicito: ['brazilian portuguese', 'portuguese\W{0,3}\(?\s*(brazil|brasil|br)\b', 'pt-br',
+                           'portugu[eê]s (do )?brasil(eiro)?']
+  espanhol: ['spanish', 'espa[ñn]ol', '\blatam\b', 'latin america']
+  brasil_latam: ['brazil', 'brasil', '\blatam\b', 'latin america', 'am[eé]rica latina', 'south america']
+  cidades_brasil: ['s[aã]o paulo', 'rio de janeiro', 'curitiba', 'belo horizonte', 'salvador', 'fortaleza',
+                   'recife', 'porto alegre', 'bras[ií]lia', 'manaus', 'bel[eé]m', 'cascavel', 'florian[oó]polis',
+                   'campinas', 'goi[aâ]nia', 'parana', 'paran[aá]']
+  remoto: ['remote', 'remoto', 'anywhere', 'worldwide', 'global', 'work from home', 'home office']
+  dominio: ['insurance', 'seguro', 'actuar', 'financ', 'accounting', 'contabil', '\brisk\b', 'risco',
+            'data analy', 'data scien', 'analytics', 'an[aá]lise de dados', '\bsql\b', 'excel', 'spreadsheet', 'power ?bi', 'coding', 'code evaluation',
+            'programa', '\bphp\b', 'mysql', 'python']
+  flexivel: ['flexible', 'flex[ií]vel', 'asynchronous', 'async', 'part[- ]time', 'meio per[ií]odo',
+             'no minimum hours', 'work whenever', 'own schedule', 'set your own']
+  ingles_fluente: ['(fluent|native|native[- ]level|bilingual|c1|c2)\W+(in\W+)?english',
+                   'english\W+(\w+\W+)?(fluency|native|fluent|c1|c2)', 'native english']
+  outro_idioma: ['\b(french|german|italian|japanese|korean|chinese|mandarin|cantonese|arabic|hindi|dutch|polish|russian|turkish|vietnamese|thai|indonesian|malay|swedish|danish|norwegian|finnish|greek|hebrew|czech|hungarian|romanian|ukrainian|tagalog|filipino|bengali|urdu|swahili|afrikaans|catalan|icelandic|bosnian|assamese|tamil|telugu|marathi|gujarati|punjabi|persian|farsi|serbian|croatian|slovak|bulgarian|lithuanian|latvian|estonian|slovenian|amharic|yoruba|hausa|zulu|khmer|burmese|nepali|sinhala)\b']
+
+# ---------------------------------------------------------------------
+#  FILTROS (vaga é descartada se bater)
+# ---------------------------------------------------------------------
+filtros:
+  descartar_tempo_integral: true   # você só tem noites e fins de semana
+  # Se o campo "local" da vaga citar um destes (e não citar Brasil/LATAM), ela é descartada
+  locais_estrangeiros: ['united states', '\busa?\b', '\bu\.s\.', 'canada', 'united kingdom', '\buk\b', 'india',
+                        'europe', '\bemea\b', '\bapac\b', 'germany', 'france', '\bspain\b', 'portugal', 'mexico',
+                        'philippines', 'japan', 'australia', 'singapore', 'china', 'colombia', 'argentina',
+                        'chile', 'peru', 'poland', 'romania', 'nigeria', 'kenya', 'egypt']
+  # Restrição de país no texto: "US only", "must reside in USA"...
+  restricao_pais: ['\b(us|u\.s\.|usa|united states|canada|uk|mexico|india|europe|eu|philippines)[- ]only\b',
+                   'only (open )?(to|for) (residents|candidates|applicants) (of|in|from) (?![^.]{0,60}(brazil|brasil|latam|latin))',
+                   '(must|need to|required to)\W+(be\W+)?(located|based|reside|residing|live|living)\W+in\W+(?![^.]{0,60}(brazil|brasil|latam|latin america|south america|anywhere))',
+                   '-based native', 'speakers? in (?!brazil|brasil)[a-zà-ú .]{3,25}\?','u\.s\. (residents|citizens) only', 'us work authori[sz]ation']
+  presencial: ['on[- ]?site', 'in[- ]office', 'in[- ]person', '\bhybrid\b', 'h[ií]brido', 'presencial',
+               'relocat', 'office[- ]based']
+  horario_fixo: ['business hours', 'hor[aá]rio comercial', '9 ?am ?(-|to|–) ?5 ?pm', 'fixed (schedule|shift)',
+                 'monday (to|through|-) friday,? \d']
+  golpe: ['taxa de inscri[cç][aã]o', '\bkit\b', 'pague para', 'registration fee', '\bdeposit\b',
+          'dep[oó]sito', 'starter fee', 'training fee', 'pay (a|the) fee', 'dados banc[aá]rios',
+          'bank (details|account) (before|to apply)']
+  corretora_empresa: ['corretora', 'insurance broker', 'brokerage', 'insurance agency', 'seguros ltda']
+  corretora_cargo: ['corretor', 'insurance (sales )?agent', 'insurance broker', 'agente de seguros']
+  corretora_excecao: ['domain expert', 'specialist', 'expert', 'trainer', 'annotat', 'evaluat', '\bsme\b', '\bai\b']
+  plataformas_bloqueadas: ['workana']
