@@ -19,7 +19,7 @@ recente: o Top 10 e a situação de cada fonte aparecem na própria página. Em 
 ## 1. Criar o bot no Telegram (5 minutos)
 
 1. No Telegram, procure **@BotFather** e envie `/newbot`.
-2. Escolha um nome (ex.: *Vagas IA Felipe*) e um usuário terminado em `bot` (ex.: `vagas_ia_felipe_bot`).
+2. Escolha um nome (ex.: *Minhas Vagas IA*) e um usuário terminado em `bot` (ex.: `minhas_vagas_ia_bot`).
 3. O BotFather responde com um **token** parecido com `123456789:AAH...`. **Guarde e não compartilhe esse token.**
 4. Abra a conversa com o seu bot novo e mande qualquer mensagem (ex.: "oi").
 5. Para descobrir o seu **chat_id**, abra no navegador (trocando `SEU_TOKEN`):

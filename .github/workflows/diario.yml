@@ -14,6 +14,8 @@ on:
 
 permissions:
   contents: write              # para salvar vagas.db e vagas.html no repositório
+  pages: write                 # para publicar a página no GitHub Pages
+  id-token: write
 
 concurrency:
   group: bot-vagas
@@ -23,6 +25,9 @@ jobs:
   rodar:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.pagina.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,6 +58,19 @@ jobs:
           name: relatorio-vagas
           path: vagas.html
           retention-days: 7
+
+      - name: Preparar página da web
+        run: |
+          mkdir -p _site
+          cp vagas.html _site/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Publicar no GitHub Pages
+        id: pagina
+        uses: actions/deploy-pages@v4
 
       - name: Salvar banco e relatório no repositório
         run: |

@@ -79,7 +79,7 @@ palavras:
   espanhol: ['spanish', 'espa[ñn]ol', '\blatam\b', 'latin america']
   brasil_latam: ['brazil', 'brasil', '\blatam\b', 'latin america', 'am[eé]rica latina', 'south america']
   cidades_brasil: ['s[aã]o paulo', 'rio de janeiro', 'curitiba', 'belo horizonte', 'salvador', 'fortaleza',
-                   'recife', 'porto alegre', 'bras[ií]lia', 'manaus', 'bel[eé]m', 'cascavel', 'florian[oó]polis',
+                   'recife', 'porto alegre', 'bras[ií]lia', 'manaus', 'bel[eé]m', 'florian[oó]polis',
                    'campinas', 'goi[aâ]nia', 'parana', 'paran[aá]']
   remoto: ['remote', 'remoto', 'anywhere', 'worldwide', 'global', 'work from home', 'home office']
   dominio: ['insurance', 'seguro', 'actuar', 'financ', 'accounting', 'contabil', '\brisk\b', 'risco',
