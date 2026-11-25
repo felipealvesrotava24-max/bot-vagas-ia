@@ -8,6 +8,7 @@ Uso:
 """
 import argparse
 import logging
+import os
 import sys
 from collections import Counter
 from pathlib import Path
@@ -86,6 +87,9 @@ def main(argv=None) -> int:
 
     relatorio.gerar(banco.ativas(), str(PASTA / "vagas.html"))
     log.info("Relatório gerado: vagas.html")
+    if destino := os.getenv("GITHUB_STEP_SUMMARY"):   # página da execução no GitHub Actions
+        with open(destino, "a", encoding="utf-8") as f:
+            f.write(relatorio.resumo_markdown(banco.ativas()[:cfg["top_n"]], resumo))
 
     if args.teste:
         print("\nTop 10 atual (modo teste, nada foi enviado):")

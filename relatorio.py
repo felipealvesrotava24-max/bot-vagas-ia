@@ -39,6 +39,22 @@ function filtrar(q) {{
 """
 
 
+def resumo_markdown(top, fontes: dict) -> str:
+    """Top N + situação das fontes, em Markdown (aparece na página da execução do GitHub Actions)."""
+    limpar = lambda s: (s or "—").replace("|", "/")
+    linhas = ["## 🤖 Top vagas de IA", "", "| Nota | Vaga | Empresa | Idioma | Valor | Publicada |",
+              "|---|---|---|---|---|---|"]
+    for v in top:
+        pub = f"{v['publicada'][8:10]}/{v['publicada'][5:7]}/{v['publicada'][:4]}" if v["publicada"] else "—"
+        linhas.append(f"| **{v['nota']}** | [{limpar(v['titulo'])}]({v['link']}) | {limpar(v['empresa'])} | "
+                      f"{limpar(v['idioma'])} | {limpar(v['valor_txt'])} | {pub} |")
+    linhas += ["", "### Fontes", "", "| Fonte | Vagas | Aprovadas | Novas |", "|---|---|---|---|"]
+    for nome, r in fontes.items():
+        linhas.append(f"| {nome} | ❌ {limpar(r['erro'])} | | |" if "erro" in r
+                      else f"| {nome} | {r['total']} | {r['aprovadas']} | {r['novas']} |")
+    return "\n".join(linhas) + "\n"
+
+
 def gerar(vagas, caminho: str = "vagas.html") -> str:
     e = html.escape
     linhas = []
